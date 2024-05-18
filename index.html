@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search for repositories on GitHub</title>
 </head>
+
 <body>
     <h1>Search for repositories on GitHub</h1>
     <input type="text" id="searchInput" placeholder="Enter text to search">
     <button onclick="searchRepositories()">Search</button>
-    <ul id="repositoriesList"></ul> 
+    <ul id="repositoriesList"></ul>
     <script>
         function searchRepositories() {
-            const query = document.getElementById("searchInput").value;
+            const query = document.getElementById("searchInput").value.trim();
             const url = `https://api.github.com/search/repositories?q=${query}`;
             fetch(url)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch repositories');
-        }
-        return response.json();
-    })
-    .then(data => {
-    })
-    .catch(error => console.error("Failed to fetch repositories", error));
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch repositories');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const repositoriesList = document.getElementById("repositoriesList");
+                    repositoriesList.innerHTML = "";
+                    data.items.forEach(repo => {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = repo.full_name;
+                        listItem.addEventListener("click", () => showRepositoryDetails(repo));
+                        repositoriesList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error("Failed to fetch repositories", error));
         }
         function showRepositoryDetails(repo) {
             alert(`Name: ${repo.full_name}\n Description: ${repo.description}\n URL: ${repo.html_url}`);
         }
-        const query = document.getElementById("searchInput").value.trim();
-const repositoriesList = document.getElementById("repositoriesList");
-repositoriesList.innerHTML = "";
     </script>
 </body>
+
 </html>
